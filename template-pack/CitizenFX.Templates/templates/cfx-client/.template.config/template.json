@@ -1,0 +1,11 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "Cfx.re",
+    "classifications": ["CitizenFX"],
+    "identity": "CitizenFX.Templates.Client.CSharp",
+    "name": "CitizenFX Client Template",
+    "shortName": "cfx-client",
+    "sourceName": "Client1",
+    "defaultName": "Client1",
+    "primaryOutputs": [ { "path": "Client1.csproj" } ]
+}

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <PackageId>CitizenFX.Framework.Client</PackageId>
+        <Version>0.1.2</Version>
+        <Authors>CitizenFX Collective</Authors>
+        <Company>Cfx.re</Company>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <NoWarn>NU5131</NoWarn>
+    </PropertyGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+      <PackageReference Include="Microsoft.Build.Framework" Version="16.4.0" PrivateAssets="All" />
+      <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.4.0" PrivateAssets="All" />
+      <PackageReference Include="dnlib" Version="3.3.1" PrivateAssets="All" />
+    </ItemGroup>
+
+    <UsingTask AssemblyFile="bin\Debug\netstandard2.0\CitizenFX.Framework.Client.dll" TaskName="Xamarin.Android.Tools.BootstrapTasks.CreateFrameworkList" />
+    <UsingTask AssemblyFile="bin\Debug\netstandard2.0\CitizenFX.Framework.Client.dll" TaskName="CitizenFX.BuildInfrastructure.StripFrameworkLibraries" />
+
+    <Target Name="GenerateOutput" BeforeTargets="_GetPackageFiles">
+        <PropertyGroup>
+            <_SdkFiles>$(CitizenFXDir)\citizen\clr2\lib\mono\4.5\*.dll</_SdkFiles>
+        </PropertyGroup>
+
+        <ItemGroup>
+            <SdkFiles Include="$(_SdkFiles)">
+                <Pack>false</Pack>
+            </SdkFiles>
+        </ItemGroup>
+
+        <MakeDir Directories="$(TargetDir)data" />
+        <MakeDir Directories="$(TargetDir)ref/net452" />
+
+        <StripFrameworkLibraries FrameworkLibraries="@(SdkFiles)" OutputDirectory="$(TargetDir)ref/net452" />
+        <CreateFrameworkList Redist="CitizenFX" Name="CitizenFX Client Libraries" FrameworkListFile="$(TargetDir)data\FrameworkList.xml" FrameworkDirectory="$(TargetDir)data" FrameworkFiles="@(SdkFiles)" />
+
+        <ItemGroup>
+            <None Include="$(TargetDir)data\FrameworkList.xml">
+                <Pack>true</Pack>
+                <PackagePath>data</PackagePath>
+            </None>
+
+            <Content Include="$(TargetDir)ref/net452/*.dll" Exclude="$(TargetDir)ref/net452/CitizenFX.Core*.dll">
+                <Pack>true</Pack>
+                <PackagePath>ref/net452/</PackagePath>
+            </Content>
+        </ItemGroup>
+    </Target>
+</Project>

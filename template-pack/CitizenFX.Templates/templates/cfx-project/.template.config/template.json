@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "Cfx.re",
+    "classifications": ["CitizenFX"],
+    "identity": "CitizenFX.Templates.Project.CSharp",
+    "name": "CitizenFX Resource",
+    "shortName": "cfx-resource",
+    "sourceName": "Resource1",
+    "defaultName": "Resource1",
+    "primaryOutputs": [ { "path": "Client/Resource1.Client.csproj" }, { "path": "Server/Resource1.Server.csproj" } ],
+    "postActions": [{
+        "description": "Add projects to solution",
+        "manualInstructions": [ ],
+        "primaryOutputIndexes": "0;1",
+        "actionId": "D396686C-DE0E-4DE6-906D-291CD29FC5DE",
+        "continueOnError": true
+    }]
+}

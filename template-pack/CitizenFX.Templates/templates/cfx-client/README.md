@@ -1,0 +1,1 @@
+# CitizenFX Client Template
