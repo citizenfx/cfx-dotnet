@@ -9,7 +9,7 @@
     <ItemGroup>
       <PackageReference Include="CitizenFX.Core.Server" Version="1.0.*" />
   
-      <Compile Include="../Shared/*.cs" />
+      <Compile Include="../Shared/**/*.cs" />
     </ItemGroup>
 </Project>
   
