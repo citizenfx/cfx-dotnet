@@ -60,9 +60,19 @@ namespace CitizenFX.BuildInfrastructure
                         continue;
                     }
 
+                    List<InterfaceImpl> interfacesToRemove = new List<InterfaceImpl>();
                     List<PropertyDef> propertiesToRemove = new List<PropertyDef>();
                     List<MethodDef> methodsToRemove = new List<MethodDef>();
                     List<FieldDef> fieldsToRemove = new List<FieldDef>();
+
+                    foreach (InterfaceImpl intf in type.Interfaces)
+                    {
+                        if (!(intf.Interface.ResolveTypeDef()?.IsPublic ?? true) &&
+                            !(intf.Interface.ResolveTypeDef()?.IsNestedPublic ?? true))
+                        {
+                            interfacesToRemove.Add(intf);
+                        }
+                    }
 
                     foreach (MethodDef method in type.Methods)
                     {
@@ -134,6 +144,11 @@ namespace CitizenFX.BuildInfrastructure
                     foreach (var property in propertiesToRemove)
                     {
                         type.Properties.Remove(property);
+                    }
+
+                    foreach (var intf in interfacesToRemove)
+                    {
+                        type.Interfaces.Remove(intf);
                     }
                 }
 
