@@ -2,7 +2,7 @@
 
     <PropertyGroup>
       <PackageType>Template</PackageType>
-      <PackageVersion>0.2.1</PackageVersion>
+      <PackageVersion>0.2.2</PackageVersion>
       <PackageId>CitizenFX.Templates</PackageId>
       <Title>CitizenFX Templates</Title>
       <Authors>CitizenFX Collective</Authors>
