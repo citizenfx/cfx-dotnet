@@ -2,7 +2,7 @@
     <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 
     <ItemGroup>
-        <KnownFrameworkReference Include="CitizenFX.Framework.Client" TargetFramework="net452" TargetingPackName="CitizenFX.Framework.Client" TargetingPackVersion="0.2.0" />
+        <KnownFrameworkReference Include="CitizenFX.Framework.Client" TargetFramework="net452" TargetingPackName="CitizenFX.Framework.Client" TargetingPackVersion="0.2.1" />
         <FrameworkReference Include="CitizenFX.Framework.Client" />
         <PackageReference Include="CitizenFX.Core.Client" Version="1.0.*" />
     </ItemGroup>
