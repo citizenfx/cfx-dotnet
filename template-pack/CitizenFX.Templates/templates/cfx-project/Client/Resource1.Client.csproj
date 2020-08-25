@@ -1,4 +1,4 @@
-<Project Sdk="CitizenFX.Sdk.Client/0.1.5">
+<Project Sdk="CitizenFX.Sdk.Client/0.2.0">
     <ItemGroup>
         <Compile Include="../Shared/**/*.cs" />
     </ItemGroup>

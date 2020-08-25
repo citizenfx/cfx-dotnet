@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <PackageId>CitizenFX.Sdk.Client</PackageId>
-        <Version>0.1.5</Version>
+        <Version>0.2.0</Version>
         <Authors>CitizenFX Collective</Authors>
         <Company>Cfx.re</Company>
         <IncludeBuildOutput>false</IncludeBuildOutput>

@@ -54,7 +54,7 @@ namespace CitizenFX.BuildInfrastructure
                         continue;
                     }
 
-                    if (!type.IsPublic)
+                    if (!type.IsPublic && !type.IsNestedPublic)
                     {
                         typesToRemove.Add(type);
                         continue;
