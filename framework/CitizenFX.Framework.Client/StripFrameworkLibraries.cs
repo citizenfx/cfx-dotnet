@@ -67,14 +67,18 @@ namespace CitizenFX.BuildInfrastructure
                     foreach (MethodDef method in type.Methods)
                     {
                         if (!method.IsPublic ||
-                            (method.HasReturnType && !(method.ReturnType.ToBasicTypeDefOrRef().ResolveTypeDef()?.IsPublic ?? true)) ||
+                            (method.HasReturnType &&
+                                !(method.ReturnType.ToBasicTypeDefOrRef().ResolveTypeDef()?.IsPublic ?? true) &&
+                                !(method.ReturnType.ToBasicTypeDefOrRef().ResolveTypeDef()?.IsNestedPublic ?? true)) ||
                             method.CustomAttributes.Any(attr => attr.AttributeType?.Name?.Contains("SecurityCritical") ?? false))
                         {
                             methodsToRemove.Add(method);
                         }
                         else
                         {
-                            if (method.Parameters.Any(arg => !(arg.Type.ToBasicTypeDefOrRef().ResolveTypeDef()?.IsPublic ?? true)))
+                            if (method.Parameters.Any(arg =>
+                                !(arg.Type.ToBasicTypeDefOrRef().ResolveTypeDef()?.IsPublic ?? true) &&
+                                !(arg.Type.ToBasicTypeDefOrRef().ResolveTypeDef()?.IsNestedPublic ?? true)))
                             {
                                 methodsToRemove.Add(method);
                                 continue;
@@ -149,7 +153,8 @@ namespace CitizenFX.BuildInfrastructure
 
                 foreach (var attr in module.Assembly.CustomAttributes)
                 {
-                    if (!(attr.AttributeType.ResolveTypeDef()?.IsPublic ?? false))
+                    if (!(attr.AttributeType.ResolveTypeDef()?.IsPublic ?? false) &&
+                        !(attr.AttributeType.ResolveTypeDef()?.IsNestedPublic ?? false))
                     {
                         attributesToRemove.Add(attr);
                     }
