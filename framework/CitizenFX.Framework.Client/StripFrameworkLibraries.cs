@@ -67,8 +67,13 @@ namespace CitizenFX.BuildInfrastructure
 
                     foreach (InterfaceImpl intf in type.Interfaces)
                     {
-                        if (!(intf.Interface.ResolveTypeDef()?.IsPublic ?? true) &&
+                        if (type.IsSealed ? 
+                            (!(intf.Interface.ResolveTypeDef()?.IsPublic ?? true) &&
                             !(intf.Interface.ResolveTypeDef()?.IsNestedPublic ?? true))
+                            : 
+                            (!(intf.Interface.ResolveTypeDef()?.IsPublic ?? true) &&
+                            !(intf.Interface.ResolveTypeDef()?.IsNestedPublic ?? true) &&
+                            !(intf.Interface.ResolveTypeDef()?.IsNestedFamily ?? true)))
                         {
                             interfacesToRemove.Add(intf);
                         }
@@ -76,20 +81,34 @@ namespace CitizenFX.BuildInfrastructure
 
                     foreach (MethodDef method in type.Methods)
                     {
-                        if (!method.IsPublic ||
+                        if (type.IsSealed ?
+                            (!method.IsPublic ||
                             (method.HasReturnType &&
                                 !(method.ReturnType.ToBasicTypeDefOrRef().ResolveTypeDef()?.IsPublic ?? true) &&
                                 !(method.ReturnType.ToBasicTypeDefOrRef().ResolveTypeDef()?.IsNestedPublic ?? true)) ||
                             method.CustomAttributes.Any(attr => attr.AttributeType?.Name?.Contains("SecurityCritical") ?? false))
+                            :
+                            (!(method.IsPublic || method.IsFamily) ||
+                            (method.HasReturnType &&
+                                !(method.ReturnType.ToBasicTypeDefOrRef().ResolveTypeDef()?.IsPublic ?? true) &&
+                                !(method.ReturnType.ToBasicTypeDefOrRef().ResolveTypeDef()?.IsNestedPublic ?? true) &&
+                                !(method.ReturnType.ToBasicTypeDefOrRef().ResolveTypeDef()?.IsNestedFamily ?? true)) ||
+                            method.CustomAttributes.Any(attr => attr.AttributeType?.Name?.Contains("SecurityCritical") ?? false)))
                         {
                             methodsToRemove.Add(method);
                         }
                         else
                         {
-                            if (method.Parameters.Any(arg =>
-                                !(arg.Type.ToBasicTypeDefOrRef().ResolveTypeDef()?.IsPublic ?? true) &&
-                                !(arg.Type.ToBasicTypeDefOrRef().ResolveTypeDef()?.IsNestedPublic ?? true)))
-                            {
+                            if (type.IsSealed ? 
+                                method.Parameters.Any(arg =>
+                                    !(arg.Type.ToBasicTypeDefOrRef().ResolveTypeDef()?.IsPublic ?? true) &&
+                                    !(arg.Type.ToBasicTypeDefOrRef().ResolveTypeDef()?.IsNestedPublic ?? true))
+                                :
+                                method.Parameters.Any(arg =>
+                                    !(arg.Type.ToBasicTypeDefOrRef().ResolveTypeDef()?.IsPublic ?? true) &&
+                                    !(arg.Type.ToBasicTypeDefOrRef().ResolveTypeDef()?.IsNestedPublic ?? true) &&
+                                    !(arg.Type.ToBasicTypeDefOrRef().ResolveTypeDef()?.IsNestedFamily ?? true)))
+                            {                                  
                                 methodsToRemove.Add(method);
                                 continue;
                             }
@@ -105,7 +124,7 @@ namespace CitizenFX.BuildInfrastructure
 
                     foreach (var field in type.Fields)
                     {
-                        if (!field.IsPublic)
+                        if (!(field.IsPublic || (!type.IsSealed && field.IsFamily)))
                         {
                             fieldsToRemove.Add(field);
                         }
@@ -120,12 +139,12 @@ namespace CitizenFX.BuildInfrastructure
                     {
                         var remove = true;
 
-                        if (property.GetMethod != null && property.GetMethod.IsPublic)
+                        if (property.GetMethod != null && (property.GetMethod.IsPublic || (!type.IsSealed && property.GetMethod.IsFamily)))
                         {
                             remove = false;
                         }
 
-                        if (property.SetMethod != null && property.SetMethod.IsPublic)
+                        if (property.SetMethod != null && (property.SetMethod.IsPublic || (!type.IsSealed && property.SetMethod.IsFamily)))
                         {
                             remove = false;
                         }
