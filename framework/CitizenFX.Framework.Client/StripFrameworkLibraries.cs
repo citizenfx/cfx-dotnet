@@ -35,6 +35,8 @@ namespace CitizenFX.BuildInfrastructure
 
         public override bool Execute()
         {
+            List<ITaskItem> _frameworkLibraries = FrameworkLibraries.ToList();
+
             void ExecuteFile(ITaskItem item)
             {
                 Log.LogWarning("Writing file {0}", item.ItemSpec);
@@ -43,6 +45,40 @@ namespace CitizenFX.BuildInfrastructure
                 ar.PreSearchPaths.Add(Path.GetDirectoryName(item.ItemSpec));
 
                 ModuleDefMD module = ModuleDefMD.Load(item.ItemSpec, new ModuleContext(ar));
+
+                List<ExportedType> exportedTypesToRemove = new List<ExportedType>();
+                List<TypeDef> typesToAcquire = new List<TypeDef>();
+
+                foreach (ExportedType exportedType in module.ExportedTypes)
+                {
+                    if (exportedType.Resolve() is TypeDef type &&
+                        !_frameworkLibraries.Any(taskItem => taskItem.ItemSpec == type.Module.Location))
+                    {
+                        exportedTypesToRemove.Add(exportedType);
+                        typesToAcquire.Add(type);
+
+                        Log.LogWarning("Moving type {0} from {1} into {2}", exportedType.FullName, type.Module, module.FullName);
+                    }
+                }
+
+                foreach (ExportedType exportedType in exportedTypesToRemove)
+                {
+                    module.ExportedTypes.Remove(exportedType);
+                }
+
+                foreach (TypeDef type in typesToAcquire)
+                {
+                    if (type.IsNested)
+                    {
+                        type.DeclaringType.NestedTypes.Remove(type);
+                    }
+                    else
+                    {
+                        type.Module.Types.Remove(type);
+                    }
+
+                    module.Types.Add(type);
+                }
 
                 List<TypeDef> typesToRemove = new List<TypeDef>();
 

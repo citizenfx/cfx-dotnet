@@ -22,12 +22,12 @@
 
     <Target Name="GenerateOutput" BeforeTargets="_GetPackageFiles">
         <PropertyGroup>
-            <_SdkFiles>$(CitizenFXDir)\citizen\clr2\lib\mono\4.5\*.dll</_SdkFiles>
+			<SdkPath>$(CitizenFXDir)\citizen\clr2\lib\mono\4.5</SdkPath>
         </PropertyGroup>
 
         <ItemGroup>
-            <SdkFiles Include="$(_SdkFiles)">
-                <Pack>false</Pack>
+            <SdkFiles Include="$(SdkPath)\*.dll" Exclude="$(SdkPath)\CitizenFX.Core*.dll">
+				<Pack>false</Pack>
             </SdkFiles>
         </ItemGroup>
 
@@ -43,7 +43,7 @@
                 <PackagePath>data</PackagePath>
             </None>
 
-            <Content Include="$(TargetDir)ref/net452/*.dll" Exclude="$(TargetDir)ref/net452/CitizenFX.Core*.dll">
+            <Content Include="$(TargetDir)ref/net452/*.dll">
                 <Pack>true</Pack>
                 <PackagePath>ref/net452/</PackagePath>
             </Content>
